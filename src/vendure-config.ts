@@ -13,7 +13,7 @@ import 'dotenv/config';
 import path from 'path';
 
 const IS_DEV = process.env.APP_ENV === 'dev';
-const serverPort = +process.env.PORT || 3000;
+const serverPort = +process.env.PORT || 10000;
 
 export const config: VendureConfig = {
     apiOptions: {
