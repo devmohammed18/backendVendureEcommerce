@@ -1,3 +1,4 @@
+
 import {
     dummyPaymentHandler,
     DefaultJobQueuePlugin,
@@ -14,7 +15,7 @@ import path from 'path';
 
 const IS_DEV = process.env.APP_ENV === 'dev';
 const serverPort = +process.env.PORT || 10000;
-
+const APP_URL = process.env.APP_URL || 'https://backendvendureecommerce.onrender.com';
 export const config: VendureConfig = {
     apiOptions: {
         port: serverPort,
@@ -70,15 +71,34 @@ export const config: VendureConfig = {
             // For local dev, the correct value for assetUrlPrefix should
             // be guessed correctly, but for production it will usually need
             // to be set manually to match your production url.
-            assetUrlPrefix: IS_DEV ? undefined : 'https://www.my-shop.com/assets/',
+             assetUrlPrefix: IS_DEV ? undefined : `${APP_URL}/assets/`,  // ✅ URL dynamique
+            //assetUrlPrefix: IS_DEV ? undefined : 'https://www.my-shop.com/assets/',
         }),
         DefaultSchedulerPlugin.init(),
         DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
         DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
         EmailPlugin.init({
-            devMode: true,
-            outputPath: path.join(__dirname, '../static/email/test-emails'),
-            route: 'mailbox',
+            // devMode: true,  // ✅ false en production
+            // outputPath: path.join(__dirname, '../static/email/test-emails'),
+            // route: 'mailbox',
+             ...(IS_DEV
+        ? {
+              devMode: true as const,
+              outputPath: path.join(__dirname, '../static/email/test-emails'),
+              route: 'mailbox',
+          }
+        : {
+              transport: {
+                  type: 'smtp',
+                  host: process.env.SMTP_HOST,
+                  port: 587,
+                  auth: {
+                      user: process.env.SMTP_USER,
+                      pass: process.env.SMTP_PASS,
+                  },
+              },
+          }),
+
             handlers: defaultEmailHandlers,
             templateLoader: new FileBasedTemplateLoader(path.join(__dirname, '../static/email/templates')),
             globalTemplateVars: {
@@ -92,10 +112,11 @@ export const config: VendureConfig = {
         }),
         AdminUiPlugin.init({
             route: 'admin',
-            port: serverPort + 2,
-            adminUiConfig: {
-                apiPort: serverPort,
-            },
+            port: serverPort,
+           adminUiConfig: {
+        apiHost: IS_DEV ? 'http://localhost' : APP_URL,  // ✅ localhost en dev
+        apiPort: IS_DEV ? serverPort : 443,               // ✅ bon port selon env
+           },
         }),
     ],
 };
