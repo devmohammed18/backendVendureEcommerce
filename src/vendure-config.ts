@@ -158,7 +158,7 @@ export const config: VendureConfig = {
     cors: {
         origin: IS_DEV 
             ? 'http://localhost:3000'                        // ton port Next.js local
-            : 'https://ecommerce-vendure-blond.vercel.app/',            // ← URL exacte de ton frontend
+            : 'https://ecommerce-vendure-blond.vercel.app',            // ← URL exacte de ton frontend
         credentials: true,                                   // OBLIGATOIRE pour les cookies
         methods: ['GET', 'POST', 'OPTIONS'],
     },
@@ -178,6 +178,9 @@ export const config: VendureConfig = {
         },
         cookieOptions: {
             secret: process.env.COOKIE_SECRET,
+             // ✅ AJOUTER CES 2 LIGNES
+            sameSite: 'none',   // obligatoire pour cross-origin
+            secure: true,       // obligatoire avec sameSite: 'none
         },
     },
     dbConnectionOptions: {
