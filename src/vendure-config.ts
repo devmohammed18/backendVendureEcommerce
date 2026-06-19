@@ -148,13 +148,24 @@ const serverPort = +process.env.PORT || 10000;
 const APP_URL = process.env.APP_URL 
 
 export const config: VendureConfig = {
-    apiOptions: {
+    apiOptions: { 
         port: serverPort,
         adminApiPath: 'admin-api',
         shopApiPath: 'shop-api',
         trustProxy: IS_DEV ? false : 1,
+   
+    // ✅ AJOUTER CECI
+    cors: {
+        origin: IS_DEV 
+            ? 'http://localhost:3000'                        // ton port Next.js local
+            : 'https://ton-frontend.vercel.app',            // ← URL exacte de ton frontend
+        credentials: true,                                   // OBLIGATOIRE pour les cookies
+        methods: ['GET', 'POST', 'OPTIONS'],
+    },
+
+
         ...(IS_DEV ? {
-            adminApiDebug: true,
+            adminApiDebug:true,
             shopApiDebug: true,
         } : {}),
     },
