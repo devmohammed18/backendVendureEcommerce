@@ -134,6 +134,7 @@ import {
     DefaultSearchPlugin,
     VendureConfig,
 } from '@vendure/core';
+import { StripePlugin } from '@vendure-community/payments-plugin/package/stripe'
 import { defaultEmailHandlers, EmailPlugin, FileBasedTemplateLoader } from '@vendure/email-plugin';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
@@ -144,7 +145,7 @@ import path from 'path';
 
 const IS_DEV = process.env.APP_ENV === 'dev';
 const serverPort = +process.env.PORT || 10000;
-const APP_URL = process.env.APP_URL || 'https://backendvendureecommerce.onrender.com'; // ✅ sans /shop-api
+const APP_URL = process.env.APP_URL 
 
 export const config: VendureConfig = {
     apiOptions: {
@@ -187,6 +188,11 @@ export const config: VendureConfig = {
     customFields: {},
     plugins: [
         GraphiqlPlugin.init(),
+  // ✅ Ajouter StripePlugin
+   StripePlugin.init({
+      storeCustomersInStripe: false,
+    }),
+
 
         // ✅ AssetServerPlugin avec Cloudinary en production, local en dev
         AssetServerPlugin.init({
@@ -201,25 +207,6 @@ export const config: VendureConfig = {
             assetUrlPrefix: IS_DEV ? undefined : undefined,
         }),
 
-        // AssetServerPlugin.init({
-
-      
-
-
-
-        //     route: 'assets',
-        //     assetUploadDir: IS_DEV
-        //         ? path.join(__dirname, '../static/assets')  // local en dev
-        //         : '/tmp/vendure/assets',                    // temporaire en prod (Cloudinary prend le relais)
-            
-        //     // ✅ storageStrategyFactory uniquement en production
-        //     ...(IS_DEV ? {} : {
-        //         storageStrategyFactory: () => new CloudinaryAssetStorageStrategy(),
-        //     }),
-
-        //     // ✅ assetUrlPrefix seulement en dev (en prod Cloudinary retourne ses propres URLs)
-        //     assetUrlPrefix: IS_DEV ? undefined : undefined,
-        // }),
 
         DefaultSchedulerPlugin.init(),
         DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),

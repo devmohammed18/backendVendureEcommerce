@@ -12,6 +12,7 @@
     "start": "concurrently npm:start:*"
   },
   "dependencies": {
+    "@vendure-community/payments-plugin": "^1.0.0",
     "@vendure/admin-ui-plugin": "3.4.0",
     "@vendure/asset-server-plugin": "^3.4.0",
     "@vendure/core": "3.4.0",
@@ -19,7 +20,8 @@
     "@vendure/graphiql-plugin": "3.4.0",
     "cloudinary": "^2.10.0",
     "dotenv": "17.2.1",
-    "pg": "8.16.3"
+    "pg": "8.16.3",
+    "stripe": "^13.11.0"
   },
   "devDependencies": {
     "@vendure/cli": "3.4.0",
